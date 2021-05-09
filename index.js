@@ -40,66 +40,97 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __importDefault(require("axios"));
-var getAvailabilty = function () {
-    var url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin";
-    var pincode = 160019;
-    setInterval(function () { return __awaiter(void 0, void 0, void 0, function () {
-        var currentDate, todayDate, newDate, today, dd, mm, yyyy, date, resp, available_places, details, centerDetails, err_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    console.log("started");
-                    currentDate = new Date();
-                    todayDate = currentDate.toISOString().slice(0, 10);
-                    newDate = todayDate.split("-");
-                    today = new Date();
-                    dd = String(today.getDate()).padStart(2, "0");
-                    mm = String(today.getMonth() + 1).padStart(2, "0");
-                    yyyy = today.getFullYear();
-                    date = dd + "-" + mm + "-" + yyyy;
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, axios_1.default.get(url, {
-                            params: {
-                                pincode: pincode,
-                                date: date,
-                            },
-                            headers: {
-                                'User-Agent': "PostmanRuntime/7.26.8",
-                            }
-                        })];
-                case 2:
-                    resp = _a.sent();
-                    console.log(resp.data);
-                    debugger;
-                    available_places = {};
-                    if (resp.data) {
-                        details = [];
-                        centerDetails = {};
-                        resp.data.centers.forEach(function (center) {
+var nodemailer = require("nodemailer");
+require("dotenv").config();
+var sgMail = require("@sendgrid/mail");
+var getAvailabilty = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var url, pincode;
+    return __generator(this, function (_a) {
+        url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin";
+        pincode = 160019;
+        setInterval(function () { return __awaiter(void 0, void 0, void 0, function () {
+            var today, dd, mm, yyyy, date, resp, available_places, isAvailable_1, details, centerDetails, msg, err_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        console.log("started");
+                        today = new Date();
+                        dd = String(today.getDate()).padStart(2, "0");
+                        mm = String(today.getMonth() + 1).padStart(2, "0");
+                        yyyy = today.getFullYear();
+                        date = dd + "-" + mm + "-" + yyyy;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, axios_1.default.get(url, {
+                                params: {
+                                    pincode: pincode,
+                                    date: date,
+                                },
+                                headers: {
+                                    "User-Agent": "PostmanRuntime/7.26.8",
+                                },
+                            })];
+                    case 2:
+                        resp = _a.sent();
+                        console.log(resp.data);
+                        debugger;
+                        available_places = {};
+                        if (resp.data) {
+                            isAvailable_1 = false;
                             details = [];
-                            center.sessions.forEach(function (e) {
-                                if (e.available_capacity >= 0 && e.min_age_limit == 45) {
-                                    console.log('vaccine Available');
-                                    details.push({ 'date': e.date, 'total_vaccine': e.available_capacity, "minimum_age": e.min_age_limit, "time": e.slots });
-                                }
+                            centerDetails = {};
+                            resp.data.centers.forEach(function (center) {
+                                details = [];
+                                center.sessions.forEach(function (e) { return __awaiter(void 0, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                        if (e.available_capacity >= 0 && e.min_age_limit == 45) {
+                                            console.log("vaccine Available");
+                                            details.push({
+                                                date: e.date,
+                                                total_vaccine: e.available_capacity,
+                                                minimum_age: e.min_age_limit,
+                                                time: e.slots,
+                                            });
+                                            isAvailable_1 = true;
+                                        }
+                                        return [2 /*return*/];
+                                    });
+                                }); });
+                                centerDetails[center.name] = details;
                             });
-                            centerDetails[center.name] = details;
-                        });
-                        available_places['centerDetails'] = centerDetails;
-                    }
-                    else {
-                        console.log('Modi ji ne vaccine nahi bheji');
-                    }
-                    return [3 /*break*/, 4];
-                case 3:
-                    err_1 = _a.sent();
-                    console.log(err_1);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
-            }
-        });
-    }); }, 9000);
-};
+                            available_places["centerDetails"] = centerDetails;
+                            if (isAvailable_1) {
+                                sgMail.setApiKey(process.env.key);
+                                msg = {
+                                    to: "rawatchd@hotmail.com",
+                                    from: "rawatashish2000@gmail.com",
+                                    subject: "Vaccine aagyi salle",
+                                    text: "" + available_places,
+                                };
+                                sgMail
+                                    .send(msg)
+                                    .then(function () {
+                                    console.log("Email sent");
+                                })
+                                    .catch(function (error) {
+                                    console.error(error);
+                                });
+                            }
+                        }
+                        else {
+                            console.log("Modi ji ne vaccine nahi bheji");
+                        }
+                        return [3 /*break*/, 4];
+                    case 3:
+                        err_1 = _a.sent();
+                        console.log(err_1);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        }); }, 9000);
+        return [2 /*return*/];
+    });
+}); };
 getAvailabilty();
