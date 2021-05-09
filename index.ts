@@ -52,8 +52,8 @@ const getAvailabilty = async () => {
         if (isAvailable) {
           sgMail.setApiKey(process.env.key);
           const msg = {
-            to: "rawatchd@hotmail.com", // Change to your recipient
-            from: "rawatashish2000@gmail.com", // Change to your verified sender
+            to: process.env.emailReceive, 
+            from: process.env.emailSender,
             subject: "Vaccine aagyi salle",
             text: JSON.stringify(available_places),
           };
