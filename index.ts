@@ -1,5 +1,4 @@
 import axios from "axios";
-const nodemailer = require("nodemailer");
 require("dotenv").config();
 const sgMail = require("@sendgrid/mail");
 
@@ -35,7 +34,7 @@ const getAvailabilty = async () => {
         resp.data.centers.forEach((center: any) => {
           details = [];
           center.sessions.forEach(async (e: any) => {
-            if (e.available_capacity >= 0 && e.min_age_limit == 45) {
+            if (e.available_capacity >= 0 && e.min_age_limit == 18) {
               console.log("vaccine Available");
               details.push({
                 date: e.date,
