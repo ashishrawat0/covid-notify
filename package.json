@@ -6,7 +6,7 @@
   "build": "tsc --project ./",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node --inspect=9000 index.js"
+    "start": " node --inspect=9000 index.js"
   },
   "repository": {
     "type": "git",
