@@ -4,8 +4,8 @@ const sgMail = require("@sendgrid/mail");
 
 const getAvailabilty = async () => {
   const url =
-    "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin";
-  const pincode = 160019;
+    "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict";
+  const districtId = 108;
   setInterval(async () => {
     console.log("started");
     var today = new Date();
@@ -17,7 +17,7 @@ const getAvailabilty = async () => {
     try {
       const resp = await axios.get(url, {
         params: {
-          pincode,
+          districtId,
           date,
         },
         headers: {
