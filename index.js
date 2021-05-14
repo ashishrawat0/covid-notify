@@ -42,93 +42,89 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __importDefault(require("axios"));
 require("dotenv").config();
 var sgMail = require("@sendgrid/mail");
-var getAvailabilty = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var url, district_id;
-    return __generator(this, function (_a) {
-        debugger;
-        url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict";
-        district_id = 108;
-        setInterval(function () { return __awaiter(void 0, void 0, void 0, function () {
-            var today, dd, mm, yyyy, date, resp, available_places, isAvailable_1, details, centerDetails, msg, err_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        console.log("started");
-                        today = new Date();
-                        dd = String(today.getDate()).padStart(2, "0");
-                        mm = String(today.getMonth() + 1).padStart(2, "0");
-                        yyyy = today.getFullYear();
-                        date = dd + "-" + mm + "-" + yyyy;
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, axios_1.default.get(url, {
-                                params: {
-                                    district_id: district_id,
-                                    date: date,
-                                },
-                                headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36' },
-                            })];
-                    case 2:
-                        resp = _a.sent();
-                        console.log(resp.data);
-                        debugger;
-                        available_places = {};
-                        if (resp.data) {
-                            isAvailable_1 = false;
+var getAvailabilty = function () {
+    debugger;
+    var url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict";
+    var district_id = 108;
+    setInterval(function () { return __awaiter(void 0, void 0, void 0, function () {
+        var today, dd, mm, yyyy, date, resp, available_places, isAvailable_1, details, centerDetails, msg, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log("started");
+                    today = new Date();
+                    dd = String(today.getDate()).padStart(2, "0");
+                    mm = String(today.getMonth() + 1).padStart(2, "0");
+                    yyyy = today.getFullYear();
+                    date = dd + "-" + mm + "-" + yyyy;
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, axios_1.default.get(url, {
+                            params: {
+                                district_id: district_id,
+                                date: date,
+                            },
+                            headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36' },
+                        })];
+                case 2:
+                    resp = _a.sent();
+                    console.log(resp.data);
+                    debugger;
+                    available_places = {};
+                    if (resp.data) {
+                        isAvailable_1 = false;
+                        details = [];
+                        centerDetails = {};
+                        resp.data.centers.forEach(function (center) {
                             details = [];
-                            centerDetails = {};
-                            resp.data.centers.forEach(function (center) {
-                                details = [];
-                                center.sessions.forEach(function (e) { return __awaiter(void 0, void 0, void 0, function () {
-                                    return __generator(this, function (_a) {
-                                        if (e.available_capacity > 0 && e.min_age_limit == 18) {
-                                            console.log("vaccine Available");
-                                            details.push({
-                                                date: e.date,
-                                                total_vaccine: e.available_capacity,
-                                                minimum_age: e.min_age_limit,
-                                                time: e.slots,
-                                            });
-                                            isAvailable_1 = true;
-                                        }
-                                        return [2 /*return*/];
-                                    });
-                                }); });
-                                centerDetails[center.name] = details;
-                            });
-                            available_places["centerDetails"] = centerDetails;
-                            if (isAvailable_1) {
-                                sgMail.setApiKey(process.env.key);
-                                msg = {
-                                    to: process.env.emailReceive,
-                                    from: process.env.emailSender,
-                                    subject: "Vaccine aagyi salle",
-                                    text: JSON.stringify(available_places),
-                                };
-                                sgMail
-                                    .send(msg)
-                                    .then(function () {
-                                    console.log("Email sent");
-                                })
-                                    .catch(function (error) {
-                                    console.error(error);
+                            center.sessions.forEach(function (e) { return __awaiter(void 0, void 0, void 0, function () {
+                                return __generator(this, function (_a) {
+                                    if (e.available_capacity > 0 && e.min_age_limit == 18) {
+                                        console.log("vaccine Available");
+                                        details.push({
+                                            date: e.date,
+                                            total_vaccine: e.available_capacity,
+                                            minimum_age: e.min_age_limit,
+                                            time: e.slots,
+                                        });
+                                        isAvailable_1 = true;
+                                    }
+                                    return [2 /*return*/];
                                 });
-                            }
+                            }); });
+                            centerDetails[center.name] = details;
+                        });
+                        available_places["centerDetails"] = centerDetails;
+                        if (isAvailable_1) {
+                            sgMail.setApiKey(process.env.key);
+                            msg = {
+                                to: process.env.emailReceive,
+                                from: process.env.emailSender,
+                                subject: "Vaccine aagyi salle",
+                                text: JSON.stringify(available_places),
+                            };
+                            sgMail
+                                .send(msg)
+                                .then(function () {
+                                console.log("Email sent");
+                            })
+                                .catch(function (error) {
+                                console.error(error);
+                            });
                         }
-                        else {
-                            console.log("Modi ji ne vaccine nahi bheji");
-                        }
-                        return [3 /*break*/, 4];
-                    case 3:
-                        err_1 = _a.sent();
-                        console.log(err_1);
-                        return [3 /*break*/, 4];
-                    case 4: return [2 /*return*/];
-                }
-            });
-        }); }, 900000);
-        return [2 /*return*/];
-    });
-}); };
+                    }
+                    else {
+                        console.log("Modi ji ne vaccine nahi bheji");
+                    }
+                    return [3 /*break*/, 4];
+                case 3:
+                    err_1 = _a.sent();
+                    console.log(err_1);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    }); }, 900000);
+};
 getAvailabilty();

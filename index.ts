@@ -2,7 +2,7 @@ import axios from "axios";
 require("dotenv").config();
 const sgMail = require("@sendgrid/mail");
 
-const getAvailabilty = async () => {
+const getAvailabilty =  () => {
   debugger;
   const url =
     "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict";
