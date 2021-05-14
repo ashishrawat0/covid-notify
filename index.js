@@ -67,9 +67,7 @@ var getAvailabilty = function () { return __awaiter(void 0, void 0, void 0, func
                                     district_id: district_id,
                                     date: date,
                                 },
-                                headers: {
-                                    "User-Agent": "PostmanRuntime/7.26.8",
-                                },
+                                headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36' },
                             })];
                     case 2:
                         resp = _a.sent();
@@ -129,7 +127,7 @@ var getAvailabilty = function () { return __awaiter(void 0, void 0, void 0, func
                     case 4: return [2 /*return*/];
                 }
             });
-        }); }, 3000);
+        }); }, 900000);
         return [2 /*return*/];
     });
 }); };

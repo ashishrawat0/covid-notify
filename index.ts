@@ -21,10 +21,7 @@ const getAvailabilty = async () => {
           district_id,
           date,
         },
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36",
-        },
+        headers: {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'},
       });
       console.log(resp.data);
       debugger;
@@ -53,7 +50,7 @@ const getAvailabilty = async () => {
         if (isAvailable) {
           sgMail.setApiKey(process.env.key);
           const msg = {
-            to: process.env.emailReceive,
+            to: process.env.emailReceive, 
             from: process.env.emailSender,
             subject: "Vaccine aagyi salle",
             text: JSON.stringify(available_places),
@@ -63,7 +60,7 @@ const getAvailabilty = async () => {
             .then(() => {
               console.log("Email sent");
             })
-            .catch((error: any) => {
+            .catch((error:any) => {
               console.error(error);
             });
         }
