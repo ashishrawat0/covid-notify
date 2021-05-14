@@ -3,9 +3,10 @@ require("dotenv").config();
 const sgMail = require("@sendgrid/mail");
 
 const getAvailabilty = async () => {
+  debugger;
   const url =
     "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict";
-  const districtId = 108;
+  const district_id = 108;
   setInterval(async () => {
     console.log("started");
     var today = new Date();
@@ -17,7 +18,7 @@ const getAvailabilty = async () => {
     try {
       const resp = await axios.get(url, {
         params: {
-          districtId,
+          district_id,
           date,
         },
         headers: {
@@ -34,7 +35,7 @@ const getAvailabilty = async () => {
         resp.data.centers.forEach((center: any) => {
           details = [];
           center.sessions.forEach(async (e: any) => {
-            if (e.available_capacity >= 0 && e.min_age_limit == 18) {
+            if (e.available_capacity > 0 && e.min_age_limit == 18) {
               console.log("vaccine Available");
               details.push({
                 date: e.date,
@@ -71,7 +72,7 @@ const getAvailabilty = async () => {
     } catch (err) {
       console.log(err);
     }
-  }, 190000);
+  }, 900000);
 };
 
 getAvailabilty();

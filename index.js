@@ -40,14 +40,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __importDefault(require("axios"));
-var nodemailer = require("nodemailer");
 require("dotenv").config();
 var sgMail = require("@sendgrid/mail");
 var getAvailabilty = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var url, pincode;
+    var url, district_id;
     return __generator(this, function (_a) {
-        url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin";
-        pincode = 160019;
+        debugger;
+        url = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict";
+        district_id = 108;
         setInterval(function () { return __awaiter(void 0, void 0, void 0, function () {
             var today, dd, mm, yyyy, date, resp, available_places, isAvailable_1, details, centerDetails, msg, err_1;
             return __generator(this, function (_a) {
@@ -64,7 +64,7 @@ var getAvailabilty = function () { return __awaiter(void 0, void 0, void 0, func
                         _a.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, axios_1.default.get(url, {
                                 params: {
-                                    pincode: pincode,
+                                    district_id: district_id,
                                     date: date,
                                 },
                                 headers: {
@@ -84,7 +84,7 @@ var getAvailabilty = function () { return __awaiter(void 0, void 0, void 0, func
                                 details = [];
                                 center.sessions.forEach(function (e) { return __awaiter(void 0, void 0, void 0, function () {
                                     return __generator(this, function (_a) {
-                                        if (e.available_capacity >= 0 && e.min_age_limit == 45) {
+                                        if (e.available_capacity > 0 && e.min_age_limit == 18) {
                                             console.log("vaccine Available");
                                             details.push({
                                                 date: e.date,
@@ -103,10 +103,10 @@ var getAvailabilty = function () { return __awaiter(void 0, void 0, void 0, func
                             if (isAvailable_1) {
                                 sgMail.setApiKey(process.env.key);
                                 msg = {
-                                    to: "rawatchd@hotmail.com",
-                                    from: "rawatashish2000@gmail.com",
+                                    to: process.env.emailReceive,
+                                    from: process.env.emailSender,
                                     subject: "Vaccine aagyi salle",
-                                    text: "" + available_places,
+                                    text: JSON.stringify(available_places),
                                 };
                                 sgMail
                                     .send(msg)
@@ -129,7 +129,7 @@ var getAvailabilty = function () { return __awaiter(void 0, void 0, void 0, func
                     case 4: return [2 /*return*/];
                 }
             });
-        }); }, 9000);
+        }); }, 3000);
         return [2 /*return*/];
     });
 }); };
